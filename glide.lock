@@ -1,0 +1,8 @@
+hash: 18067b5b50bd708d0b06a2e563b34b091c62316fbe131d9651b6444bcd182d02
+updated: 2018-06-18T14:37:13.004244+05:00
+imports:
+- name: github.com/coreos/bbolt
+  version: 48ea1b39c25fc1bab3506fbc712ecbaa842c4d2d
+- name: github.com/go-chi/chi
+  version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
+testImports: []
