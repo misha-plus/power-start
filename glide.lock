@@ -1,8 +1,14 @@
-hash: 18067b5b50bd708d0b06a2e563b34b091c62316fbe131d9651b6444bcd182d02
-updated: 2018-06-18T14:37:13.004244+05:00
+hash: a948998ddfa9df88ff6d6e52fb33efd35345f538ecb2618f218c3bdcf6240222
+updated: 2018-06-18T17:06:01.369433+05:00
 imports:
 - name: github.com/coreos/bbolt
   version: 48ea1b39c25fc1bab3506fbc712ecbaa842c4d2d
 - name: github.com/go-chi/chi
   version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
+- name: github.com/linde12/gowol
+  version: 71887642b739975765ded5308dd16a66437be315
+- name: golang.org/x/sys
+  version: 6c888cc515d3ed83fc103cf1d84468aad274b0a7
+  subpackages:
+  - unix
 testImports: []

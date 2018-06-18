@@ -9,14 +9,16 @@ import (
 
 	bolt "github.com/coreos/bbolt"
 	"github.com/go-chi/chi"
+	"github.com/linde12/gowol"
 )
 
 type record struct {
 	Name      string `json:"name"`
 	MAC       string `json:"mac"`
-	IP        string `json:"ip"`
 	IsRunning bool
 }
+
+var machineBucket = []byte("Machines")
 
 func main() {
 	db, err := bolt.Open("my.db", 0600, nil)
@@ -36,7 +38,7 @@ func main() {
 	}()
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte("Machines"))
+		_, err := tx.CreateBucketIfNotExists(machineBucket)
 		return err
 	})
 	if err != nil {
@@ -59,7 +61,7 @@ func main() {
 		}
 
 		err = db.Update(func(tx *bolt.Tx) error {
-			machines := tx.Bucket([]byte("Machines"))
+			machines := tx.Bucket(machineBucket)
 			data, err := json.Marshal(theRecord)
 			if err != nil {
 				return err
@@ -81,7 +83,7 @@ func main() {
 	r.Post("/remove/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 		err := db.Update(func(tx *bolt.Tx) error {
-			machines := tx.Bucket([]byte("Machines"))
+			machines := tx.Bucket(machineBucket)
 			return machines.Delete([]byte(name))
 		})
 		if err != nil {
@@ -94,8 +96,31 @@ func main() {
 	})
 
 	r.Post("/start/{name}", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
+		name := chi.URLParam(r, "name")
+		err := db.View(func(tx *bolt.Tx) error {
+			machine := tx.Bucket(machineBucket)
+			theRecord := record{}
+			json.Unmarshal(machine.Get([]byte(name)), &theRecord)
+
+			packet, err := gowol.NewMagicPacket(theRecord.MAC)
+			if err != nil {
+				return err
+			}
+			// TODO: add selecting port and IP
+			log.Printf("Starting machine: %s", name)
+			return packet.Send("255.255.255.255")
+		})
+
+		if err != nil {
+			log.Printf("/start/%s: %v", name, err)
+			w.WriteHeader(500)
+			w.Write([]byte("Internal error"))
+			return
+		}
+
+		w.Write([]byte("Starting"))
 	})
+
 	r.Get("/status/{name}", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("welcome"))
 	})
@@ -103,7 +128,7 @@ func main() {
 	r.Get("/list", func(w http.ResponseWriter, r *http.Request) {
 		var result []record
 		err := db.View(func(tx *bolt.Tx) error {
-			machines := tx.Bucket([]byte("Machines"))
+			machines := tx.Bucket(machineBucket)
 			c := machines.Cursor()
 			var err error
 
