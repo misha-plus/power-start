@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,6 +20,19 @@ type record struct {
 }
 
 var machineBucket = []byte("Machines")
+
+type httpError struct {
+	code    int
+	message string
+}
+
+func (e *httpError) Error() string {
+	return fmt.Sprintf("%d - %s", e.code, e.message)
+}
+
+func newHTTPError(code int, message string) *httpError {
+	return &httpError{code, message}
+}
 
 func main() {
 	db, err := bolt.Open("my.db", 0600, nil)
@@ -148,6 +162,50 @@ func main() {
 		}
 
 		json.NewEncoder(w).Encode(result)
+	})
+
+	// TODO add auth
+	r.Post("/agent/{name}/heartbeat", func(w http.ResponseWriter, r *http.Request) {
+		name := chi.URLParam(r, "name")
+		err := db.Batch(func(tx *bolt.Tx) error {
+			machine := tx.Bucket(machineBucket)
+			theRecord := record{}
+			bytes := machine.Get([]byte(name))
+			if bytes == nil {
+				return newHTTPError(404, "Machine not found")
+			}
+			json.Unmarshal(bytes, &theRecord)
+
+			if theRecord.IsRunning {
+				return nil
+			}
+
+			theRecord.IsRunning = true
+			bytes, err := json.Marshal(theRecord)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(theRecord)
+
+			return machine.Put([]byte(theRecord.Name), bytes)
+		})
+
+		if err, ok := err.(*httpError); ok {
+			log.Printf("/agent/%s/heartbeat: %v", name, err)
+			w.WriteHeader(err.code)
+			w.Write([]byte(err.message))
+			return
+		}
+
+		if err != nil {
+			log.Printf("/agent/%s/heartbeat: %v", name, err)
+			w.WriteHeader(500)
+			w.Write([]byte("Internal error"))
+			return
+		}
+
+		w.Write([]byte("Ok"))
 	})
 	http.ListenAndServe(":3000", r)
 	log.Println("main")

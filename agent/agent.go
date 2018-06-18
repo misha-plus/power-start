@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -26,7 +25,7 @@ func sendBeacon() {
 func main() {
 	// TODO extract interval
 	ticker := time.NewTicker(5 * time.Second)
-	fmt.Println("Started")
+	log.Println("Started")
 	for range ticker.C {
 		sendBeacon()
 	}
