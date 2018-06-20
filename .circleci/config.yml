@@ -62,14 +62,6 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
-  tagged-build:
-    jobs:
-      - build:
-          filters:
-            branches:
-              ignore: /.*/
-	    tags:
-	      only: /^v.*/
   # untagged:
   #   jobs:
   #     - build:
