@@ -53,12 +53,14 @@ jobs:
           at: artifacts
       - run: ls artifacts
       - run: go get github.com/tcnksm/ghr
-      - run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -prerelease tmp artifacts
+      - run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -prerelease $CIRCLE_TAG artifacts
 workflows:
   version: 2
   one_and_two:
     jobs:
       - build
       - release:
+          tags:
+            only: /^v.*/
           requires:
             - build
