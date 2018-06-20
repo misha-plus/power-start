@@ -60,7 +60,7 @@ workflows:
     jobs:
       - build
       - release:
-          # tags:
-          #   only: /^v.*/
+          tags:
+            only: /^v.*/
           requires:
             - build
