@@ -40,6 +40,8 @@ workflows:
               ignore: /^v.*/
       - deploy:
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only: master
   # untagged:
