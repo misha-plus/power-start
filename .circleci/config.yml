@@ -16,6 +16,8 @@ jobs:
 
   deployment:
     release:
+      docker:
+        - image: circleci/golang:1.9
       branch: master
       steps:
         — run: go get github.com/tcnksm/ghr
