@@ -17,6 +17,6 @@ jobs:
   deployment:
     release:
       branch: master
-      commands:
-        — go get github.com/tcnksm/ghr
-        — ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
+      steps:
+        — run: go get github.com/tcnksm/ghr
+        — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
