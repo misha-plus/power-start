@@ -1,22 +1,62 @@
-# Golang CircleCI 2.0 configuration file
-#
+# # Golang CircleCI 2.0 configuration file
+# #
+# version: 2
+# jobs:
+#   build:
+#     docker:
+#       - image: circleci/golang:1.9
+      
+#     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+#     steps:
+#       - checkout
+
+#       - run: mkdir build
+#       - run: go build -o build/power-start-agent agent/*.go
+#       - run: go build -o build/power-start-server server/*.go
+
+#   deployment:
+#     docker:
+#       - image: circleci/golang:1.9
+#     steps:
+#       — run: go get github.com/tcnksm/ghr
+#       — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
+
+
 version: 2
 jobs:
   build:
     docker:
       - image: circleci/golang:1.9
       
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
 
-      - run: mkdir build
-      - run: go build -o build/power-start-agent agent/*.go
-      - run: go build -o build/power-start-server server/*.go
-
-  deployment:
+      - run: mkdir artifacts
+      - run: go build -o artifacts/power-start-agent agent/*.go
+      - run: go build -o artifacts/power-start-server server/*.go
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: artifacts
+          # Must be relative path from root
+          paths:
+            - power-start-agent
+            - power-start-server
+      
+  release:
     docker:
       - image: circleci/golang:1.9
     steps:
-      — run: go get github.com/tcnksm/ghr
-      — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
+      - run: echo "A more familiar hi"  
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: artifacts
+
+      - run: ls artifacts
+workflows:
+  version: 2
+  one_and_two:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
