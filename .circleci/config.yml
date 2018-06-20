@@ -38,7 +38,7 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
-      - deploy:
+      - release:
           filters:
             tags:
               only: /^v.*/
