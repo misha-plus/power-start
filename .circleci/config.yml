@@ -32,6 +32,7 @@ jobs:
       - checkout
 
       - run: mkdir artifacts
+      - run: ls -laR
       - run: go build -o artifacts/power-start-agent agent/*.go
       - run: go build -o artifacts/power-start-server server/*.go
       - persist_to_workspace:
