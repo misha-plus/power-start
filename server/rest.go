@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"net/url"
 	"time"
 
 	bolt "github.com/coreos/bbolt"
@@ -52,6 +54,15 @@ func (app *appHandle) runRest() {
 			respondError(newHTTPError(400, "Invalid JSON"), w, r)
 			return
 		}
+		if _, err := net.ParseMAC(machine.MAC); err != nil {
+			respondError(newHTTPError(400, "Invalid MAC address"), w, r)
+			return
+		}
+		// Because name used in HTTP routes
+		if url.PathEscape(machine.Name) != machine.Name {
+			respondError(newHTTPError(400, "Invalid name"), w, r)
+			return
+		}
 
 		err = app.db.Update(func(tx *bolt.Tx) error {
 			machines := tx.Bucket(machineBucket)
@@ -67,7 +78,6 @@ func (app *appHandle) runRest() {
 		}
 
 		log.Printf("Added machine: %v", machine)
-		// TODO: add validation
 		w.Write([]byte("Ok"))
 	})
 
