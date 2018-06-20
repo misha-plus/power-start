@@ -56,18 +56,32 @@ jobs:
       - run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -prerelease $CIRCLE_TAG artifacts
 workflows:
   version: 2
-  untagged:
+  un-tagged-build:
     jobs:
       - build:
           filters:
             tags:
               ignore: /^v.*/
-  tagged:
+  tagged-build:
     jobs:
-      - build
-      - release:
-          requires:
-            - build
-      tags:
-        only: /^v.*/
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+	    tags:
+	      only: /^v.*/
+  # untagged:
+  #   jobs:
+  #     - build:
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  # tagged:
+  #   jobs:
+  #     - build
+  #     - release:
+  #         requires:
+  #           - build
+  #     tags:
+  #       only: /^v.*/
           
