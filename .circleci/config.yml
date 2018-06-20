@@ -39,9 +39,9 @@ workflows:
             tags:
               ignore: /^v.*/
       - deploy:
-        filters:
-          branches:
-            only: master
+          filters:
+            branches:
+              only: master
   # untagged:
   #   jobs:
   #     - build:
