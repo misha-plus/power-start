@@ -63,6 +63,9 @@ func (app *appHandle) runRest() {
 			respondError(newHTTPError(400, "Invalid name"), w, r)
 			return
 		}
+		machine.Requests = 0
+		machine.LastHeartbeat = time.Time{}
+		machine.LastRequest = time.Time{}
 
 		err = app.db.Update(func(tx *bolt.Tx) error {
 			machines := tx.Bucket(machineBucket)
@@ -156,7 +159,13 @@ func (app *appHandle) runRest() {
 	})
 
 	r.Get("/list", func(w http.ResponseWriter, r *http.Request) {
-		var result []machineRecord
+		type resultRecord struct {
+			Name      string `json:"name"`
+			MAC       string `json:"mac"`
+			Requests  int    `json:"requests"`
+			IsRunning bool   `json:"isRunning"`
+		}
+		var result []resultRecord
 		err := app.db.View(func(tx *bolt.Tx) error {
 			machines := tx.Bucket(machineBucket)
 			c := machines.Cursor()
@@ -165,7 +174,14 @@ func (app *appHandle) runRest() {
 			for k, v := c.First(); k != nil && err == nil; k, v = c.Next() {
 				machine := machineRecord{}
 				err = json.Unmarshal(v, &machine)
-				result = append(result, machine)
+
+				record := resultRecord{
+					machine.Name,
+					machine.MAC,
+					machine.Requests,
+					time.Now().Sub(machine.LastHeartbeat) < 5*time.Minute,
+				}
+				result = append(result, record)
 			}
 			return err
 		})

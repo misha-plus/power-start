@@ -21,6 +21,7 @@ func (h *appHandle) backgroundJob() {
 				continue
 			}
 
+			// TODO extract
 			isRunning := time.Now().Sub(machine.LastHeartbeat) < 5*time.Minute
 			if isRunning || machine.Requests == 0 {
 				continue

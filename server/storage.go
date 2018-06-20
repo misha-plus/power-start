@@ -8,11 +8,11 @@ import (
 )
 
 type machineRecord struct {
-	Name          string `json:"name"`
-	MAC           string `json:"mac"`
-	Requests      int    // TODO: hide it from output
-	LastHeartbeat time.Time
-	LastRequest   time.Time
+	Name          string    `json:"name"`
+	MAC           string    `json:"mac"`
+	Requests      int       `json:"requests"`
+	LastHeartbeat time.Time `json:"lastHeartbeat"`
+	LastRequest   time.Time `json:"lastRequest"`
 }
 
 var machineBucket = []byte("Machines")
