@@ -3,32 +3,32 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/go-ini/ini"
 )
 
-var serverBaseURL = "http://localhost:3000"
-var machineName = "thename"
-var interval = 5 * time.Second
-
 var config = struct {
 	ServerBaseURL   string
 	MachineName     string
-	IntervalSeconds int
+	ShutdownCommand string
+	Heartbeat       struct {
+		IntervalSeconds int
+		TimeoutSeconds  int
+	}
 }{}
 
+var client http.Client
+
 func sendBeacon() {
-	// TODO timeout
 	// TODO auth
 	url := fmt.Sprintf(
 		"%s/agent/%s/heartbeat", config.ServerBaseURL, config.MachineName)
-	resp, err := http.DefaultClient.Post(url, "", nil)
+	resp, err := client.Post(url, "", nil)
 	if err != nil {
 		log.Printf("Heartbeat error: %v", err)
 		return
@@ -60,24 +60,22 @@ func sendBeacon() {
 }
 
 func shutdown() error {
-	fmt.Println("Shutting down")
-	cmd := exec.Command("echo", "Hello")
-
-	stdout, err := cmd.StdoutPipe()
-	defer stdout.Close()
+	fmt.Printf("Shutting down using '%s'\n", config.ShutdownCommand)
+	cmd := exec.Command("bash", "-c", config.ShutdownCommand)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return err
 	}
 
-	stderr, err := cmd.StderrPipe()
-	defer stderr.Close()
-	if err != nil {
-		return err
+	byline := strings.Split(string(output), "\n")
+	for _, line := range byline {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		fmt.Println(">", line)
 	}
-	go io.Copy(os.Stdout, stdout)
-	go io.Copy(os.Stderr, stderr)
 
-	return cmd.Run()
+	return nil
 }
 
 func main() {
@@ -86,8 +84,14 @@ func main() {
 		log.Fatalf("Can't parse config: %v", err)
 	}
 
-	ticker := time.NewTicker(time.Duration(config.IntervalSeconds) * time.Second)
+	client = http.Client{
+		Timeout: time.Duration(config.Heartbeat.TimeoutSeconds) * time.Second,
+	}
+
+	ticker := time.NewTicker(
+		time.Duration(config.Heartbeat.IntervalSeconds) * time.Second)
 	log.Println("Started")
+	sendBeacon()
 	for range ticker.C {
 		sendBeacon()
 	}

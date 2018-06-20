@@ -7,14 +7,21 @@ import (
 	"syscall"
 
 	bolt "github.com/coreos/bbolt"
+	"github.com/go-ini/ini"
 )
+
+var config = struct {
+	MachineInactivityTimeoutSeconds int
+	BindAddress                     string
+	DBPath                          string
+}{}
 
 type appHandle struct {
 	db *bolt.DB
 }
 
 func newApp() (*appHandle, error) {
-	db, err := bolt.Open("my.db", 0600, nil)
+	db, err := bolt.Open(config.DBPath, 0600, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -36,6 +43,11 @@ func (app *appHandle) stop() {
 }
 
 func main() {
+	err := ini.MapTo(&config, "server-config.ini")
+	if err != nil {
+		log.Fatalf("Can't parse config: %v", err)
+	}
+
 	app, err := newApp()
 	if err != nil {
 		log.Fatal(err)

@@ -21,8 +21,9 @@ func (h *appHandle) backgroundJob() {
 				continue
 			}
 
-			// TODO extract
-			isRunning := time.Now().Sub(machine.LastHeartbeat) < 5*time.Minute
+			inactivityDuration :=
+				time.Duration(config.MachineInactivityTimeoutSeconds) * time.Second
+			isRunning := time.Now().Sub(machine.LastHeartbeat) < inactivityDuration
 			if isRunning || machine.Requests == 0 {
 				continue
 			}

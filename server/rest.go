@@ -233,5 +233,7 @@ func (app *appHandle) runRest() {
 			log.Printf("/agent/%s/heartbeat: %v", name, err)
 		}
 	})
-	http.ListenAndServe(":3000", r)
+
+	log.Printf("Starting at %s", config.BindAddress)
+	http.ListenAndServe(config.BindAddress, r)
 }
