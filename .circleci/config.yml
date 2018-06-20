@@ -15,10 +15,8 @@ jobs:
       - run: go build -o build/power-start-server server/*.go
 
   deployment:
-    release:
-      docker:
-        - image: circleci/golang:1.9
-      branch: master
-      steps:
-        — run: go get github.com/tcnksm/ghr
-        — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      — run: go get github.com/tcnksm/ghr
+      — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
