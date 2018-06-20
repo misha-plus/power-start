@@ -64,7 +64,7 @@ workflows:
               ignore: /^v.*/
   tagged:
     jobs:
-      - build:
+      - build
       - release:
           requires:
             - build
