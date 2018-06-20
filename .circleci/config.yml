@@ -1,5 +1,3 @@
-# Golang CircleCI 2.0 configuration file
-#
 version: 2
 jobs:
   build:
@@ -10,13 +8,52 @@ jobs:
     steps:
       - checkout
 
-      - run: mkdir build
-      - run: go build -o build/power-start-agent agent/*.go
-      - run: go build -o build/power-start-server server/*.go
-
-  deployment:
-    release:
-    branch: master
-    commands:
-      — go get github.com/tcnksm/ghr
-      — ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
+      - run: mkdir artifacts
+      - run: ls -laR
+      - run: go build -o artifacts/power-start-agent agent/*.go
+      - run: go build -o artifacts/power-start-server server/*.go
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory
+          root: artifacts
+          # Must be relative path from root
+          paths:
+            - power-start-agent
+            - power-start-server
+      
+  release:
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: artifacts
+      - run: ls artifacts
+      - run: go get github.com/tcnksm/ghr
+      - run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME -prerelease $CIRCLE_TAG artifacts
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+  # untagged:
+  
+  #   jobs:
+  #     - build:чс
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  # tagged:
+  #   jobs:
+  #     - build
+  #     - release:
+  #         requires:
+  #           - build
+  #     tags:
+  #       only: /^v.*/
+          

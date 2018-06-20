@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - 1.10.x
+
+script:
+  - mkdir -p artifacts
+  - go build -o artifacts/power-start-agent agent/*.go
+  - go build -o artifacts/power-start-server server/*.go
+  - ls artifacts
