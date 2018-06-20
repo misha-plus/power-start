@@ -13,3 +13,10 @@ jobs:
       - run: mkdir build
       - run: go build -o build/power-start-agent agent/*.go
       - run: go build -o build/power-start-server server/*.go
+
+  deployment:
+    release:
+    branch: master
+    commands:
+      — go get github.com/tcnksm/ghr
+      — ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
