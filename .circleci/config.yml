@@ -44,6 +44,7 @@ workflows:
               only: /^v.*/
             branches:
               only: master
+              
   # untagged:
   #   jobs:
   #     - build:
