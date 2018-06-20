@@ -1,5 +1,6 @@
 Power start
 ===========
+[![Build Status](https://travis-ci.org/misha-plus/power-start.svg?branch=master)](https://travis-ci.org/misha-plus/power-start)
 
 Server for starting and stopping machines in the LAN.
 
