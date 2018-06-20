@@ -1,27 +1,3 @@
-# # Golang CircleCI 2.0 configuration file
-# #
-# version: 2
-# jobs:
-#   build:
-#     docker:
-#       - image: circleci/golang:1.9
-      
-#     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-#     steps:
-#       - checkout
-
-#       - run: mkdir build
-#       - run: go build -o build/power-start-agent agent/*.go
-#       - run: go build -o build/power-start-server server/*.go
-
-#   deployment:
-#     docker:
-#       - image: circleci/golang:1.9
-#     steps:
-#       — run: go get github.com/tcnksm/ghr
-#       — run: ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build/
-
-
 version: 2
 jobs:
   build:
@@ -62,14 +38,10 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
-  tagged-build:
-    jobs:
-      - build:
-          filters:
-            branches:
-              ignore: /.*/
-      tags:
-        only: /^v.*/
+      - deploy:
+        filters:
+          branches:
+            only: master
   # untagged:
   #   jobs:
   #     - build:
