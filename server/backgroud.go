@@ -43,7 +43,9 @@ func (h *appHandle) backgroundJob() {
 }
 
 func (h *appHandle) runBackgoundJobs() {
-	d := 30 * time.Second
+	h.backgroundJob()
+
+	d := time.Duration(config.StartTriesWaitSeconds) * time.Second
 	timer := time.NewTimer(d)
 	for {
 		<-timer.C

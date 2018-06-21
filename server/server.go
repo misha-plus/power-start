@@ -12,8 +12,11 @@ import (
 
 var config = struct {
 	MachineInactivityTimeoutSeconds int
+	StartTriesWaitSeconds           int
+	ShutdownDelaySeconds            int
 	BindAddress                     string
 	DBPath                          string
+	Network                         string
 }{}
 
 type appHandle struct {

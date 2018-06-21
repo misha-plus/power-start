@@ -175,11 +175,13 @@ func (app *appHandle) runRest() {
 				machine := machineRecord{}
 				err = json.Unmarshal(v, &machine)
 
+				inactivityDuration :=
+					time.Duration(config.MachineInactivityTimeoutSeconds) * time.Second
 				record := resultRecord{
 					machine.Name,
 					machine.MAC,
 					machine.Requests,
-					time.Now().Sub(machine.LastHeartbeat) < 5*time.Minute,
+					time.Now().Sub(machine.LastHeartbeat) < inactivityDuration,
 				}
 				result = append(result, record)
 			}
@@ -214,7 +216,8 @@ func (app *appHandle) runRest() {
 				return newHTTPError(404, "Machine not found")
 			}
 
-			lastRequestWasLongAgo := time.Now().Sub(machine.LastRequest) > 5*time.Minute
+			shutdownDelay := time.Duration(config.ShutdownDelaySeconds) * time.Second
+			lastRequestWasLongAgo := time.Now().Sub(machine.LastRequest) > shutdownDelay
 			if machine.Requests == 0 && lastRequestWasLongAgo {
 				response.ShouldShutdown = true
 			}
