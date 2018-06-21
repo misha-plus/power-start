@@ -27,7 +27,7 @@ var client http.Client
 func sendBeacon() {
 	// TODO auth
 	url := fmt.Sprintf(
-		"%s/agent/%s/heartbeat", config.ServerBaseURL, config.MachineName)
+		"%s/api/agent/%s/heartbeat", config.ServerBaseURL, config.MachineName)
 	resp, err := client.Post(url, "", nil)
 	if err != nil {
 		log.Printf("Heartbeat error: %v", err)

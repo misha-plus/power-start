@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	bolt "github.com/coreos/bbolt"
@@ -47,17 +48,21 @@ func (app *appHandle) runRest() {
 		w.Write([]byte("welcome"))
 	})
 
-	r.Post("/add", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/api/add", func(w http.ResponseWriter, r *http.Request) {
 		machine := machineRecord{}
 		err := json.NewDecoder(r.Body).Decode(&machine)
 		if err != nil {
 			respondError(newHTTPError(400, "Invalid JSON"), w, r)
 			return
 		}
-		if _, err := net.ParseMAC(machine.MAC); err != nil {
+
+		mac, err := net.ParseMAC(machine.MAC)
+		if err != nil {
 			respondError(newHTTPError(400, "Invalid MAC address"), w, r)
 			return
 		}
+		machine.MAC = strings.ToUpper(mac.String())
+
 		// Because name used in HTTP routes
 		if url.PathEscape(machine.Name) != machine.Name {
 			respondError(newHTTPError(400, "Invalid name"), w, r)
@@ -84,7 +89,7 @@ func (app *appHandle) runRest() {
 		w.Write([]byte("Ok"))
 	})
 
-	r.Post("/remove/{name}", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/api/remove/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 		err := app.db.Update(func(tx *bolt.Tx) error {
 			machines := tx.Bucket(machineBucket)
@@ -97,7 +102,7 @@ func (app *appHandle) runRest() {
 		w.Write([]byte("Deleted record for " + name))
 	})
 
-	r.Post("/start/{name}", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/api/start/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 		// TODO: add heartbeat
 
@@ -127,7 +132,7 @@ func (app *appHandle) runRest() {
 		w.Write([]byte("Accepted"))
 	})
 
-	r.Post("/stop/{name}", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/api/stop/{name}", func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 
 		err := app.db.Update(func(tx *bolt.Tx) error {
@@ -154,11 +159,7 @@ func (app *appHandle) runRest() {
 		w.Write([]byte("Accepted"))
 	})
 
-	r.Get("/status/{name}", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
-
-	r.Get("/list", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/api/list", func(w http.ResponseWriter, r *http.Request) {
 		type resultRecord struct {
 			Name      string `json:"name"`
 			MAC       string `json:"mac"`
@@ -200,7 +201,7 @@ func (app *appHandle) runRest() {
 	})
 
 	// TODO add auth
-	r.Post("/agent/{name}/heartbeat", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/api/agent/{name}/heartbeat", func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 		log.Printf("/agent/%s/heartbeat", name)
 		response := struct {

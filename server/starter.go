@@ -15,7 +15,7 @@ func startMachine(mac string) error {
 	if err != nil {
 		return err
 	}
-	// TODO: add selecting port and IP
+
 	log.Printf("Starting machine: MAC = %s", mac)
 	_, network, err := net.ParseCIDR(config.Network)
 	if err != nil {
