@@ -11,19 +11,19 @@ For each machine have stored count of start requests. If start requests is 0 the
 ## API
 
 ### Add machine
-`curl -X POST -d '{"name":"the_name", "mac":"01:23:45:67:89:AB"}' localhost:3000/add`
+`curl -X POST -d '{"name":"the_name", "mac":"01:23:45:67:89:AB"}' localhost:4000/api/add`
 
 ### Delete machine
-`curl -X POST localhost:3000/remove/the_name`
+`curl -X POST localhost:4000/api/remove/the_name`
 
 ### Start request
-`curl -X POST localhost:3000/start/the_name`
+`curl -X POST localhost:4000/api/start/the_name`
 
 ### Stop reqest
-`curl -X POST localhost:3000/stop/the_name`
+`curl -X POST localhost:4000/api/stop/the_name`
 
 ### List of machines
-`curl localhost:3000/list`
+`curl localhost:4000/api/list`
 
 Example of response
 ```json
