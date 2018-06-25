@@ -12,10 +12,10 @@ class MachineCard extends Component {
 
     render() {
       const [, color, status] = [
-        [(x, y) => x == false && y == 0, 'red',    'Stopped'],
-        [(x, y) => x == false && y > 0,  'orange', 'Pending run'],
-        [(x, y) => x == true  && y > 0,  'green',  'Running'],
-        [(x, y) => x == true  && y == 0, 'orange', 'Pending stop'],
+        [(x, y) => x === false && y === 0, 'red',    'Stopped'],
+        [(x, y) => x === false && y > 0,  'orange', 'Pending run'],
+        [(x, y) => x === true  && y > 0,  'green',  'Running'],
+        [(x, y) => x === true  && y === 0, 'orange', 'Pending stop'],
       ].find(row => row[0](this.props.isRunning, this.props.requests))
 
       return (
@@ -54,7 +54,7 @@ class MachineCard extends Component {
                 basic
                 color='red'
                 onClick={this.props.onStop}
-                disabled={this.props.requests == 0}
+                disabled={this.props.requests === 0}
               >
                 Stop
               </Button>

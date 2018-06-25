@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Button, Icon, Modal, Header } from 'semantic-ui-react'
 
 export default ({isOpen, trigger, name, onRemove, onClose}) => (

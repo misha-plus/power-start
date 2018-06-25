@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Icon, Modal, Form, Input } from 'semantic-ui-react'
+import { Button, Modal, Form, Input } from 'semantic-ui-react'
 
 class AddModal extends Component {
   constructor({ isOpen, onAdd, onCancel }) {
