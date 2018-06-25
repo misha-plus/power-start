@@ -1,7 +1,11 @@
-.power-start-cards {
+.power-start-centered {
   justify-content: center;
 }
 
 .power-start-header {
   margin-top: 1em;
+}
+
+.power-start-message {
+  margin-bottom: 1em;
 }

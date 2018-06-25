@@ -12,6 +12,11 @@ trim_trailing_whitespace = true
 [*.go]
 charset = utf-8
 
+[*.js]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
 # Tab indentation (no size specified)
 [Makefile]
 indent_style = tab

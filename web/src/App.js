@@ -2,124 +2,128 @@ import React, { Component } from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 import {
-  Button, Card, Image, Dimmer, Loader, Icon, Modal, Header, Label
+  Button, Card, Image, Dimmer, Loader, Icon, Header, Message, Divider, Container
 } from 'semantic-ui-react'
 import axios from 'axios';
 
-const RemoveMachineModal = ({isOpen, trigger, name, onRemove, onClose}) => (
-  <Modal open={isOpen} basic size='small' onClose={onClose}>
-    <Header icon='trash alternate' content={`Removing machine "${name}"`} />
-    <Modal.Content>
-      <p>
-        Do you want to remove machine "{name}" from power-start?
-        You can't undo this action. Machine will keep current power state.
-      </p>
-    </Modal.Content>
-    <Modal.Actions>
-      <Button basic color='red' inverted onClick={onRemove}>
-        <Icon name='trash alternate' /> Remove
-      </Button>
-      <Button color='green' inverted onClick={onClose}>
-        <Icon name='checkmark' /> Cancel
-      </Button>
-    </Modal.Actions>
-  </Modal>
-)
+import AddModal from './AddModal'
+import MachineCard from './MachineCard'
 
-class MachineCard extends Component {
-  constructor ({ name, mac, requests, isRunning, onStart, onStop, onRemove }) {
-    super()
-    this.props = { name, mac, requests, isRunning, onStart, onStop, onRemove }
-    this.state = { isRemoveModalOpen: false }
+const CustomMessage = ({ header, text, status, onDismiss }) => {
+  let color = null
+  if (status === 'success') {
+    color = 'green'
+  } else if (status === 'error') {
+    color = 'red'
   }
 
-  render() {
-    const [, color, status] = [
-      [(x, y) => x == false && y == 0, 'red',    'Stopped'],
-      [(x, y) => x == false && y > 0,  'orange', 'Pending run'],
-      [(x, y) => x == true  && y > 0,  'green',  'Running'],
-      [(x, y) => x == true  && y == 0, 'orange', 'Pending stop'],
-    ].find(row => row[0](this.props.isRunning, this.props.requests))
-
-    return (
-      <Card color={color}>
-        <Card.Content>
-          <Button
-            floated='right'
-            circular
-            icon='trash alternate'
-            onClick={() => this.setState({isRemoveModalOpen: true})}
-          />
-          <RemoveMachineModal
-            isOpen={this.state.isRemoveModalOpen}
-            onClose={() => this.setState({isRemoveModalOpen: false})}
-            onRemove={() => {
-              this.setState({isRemoveModalOpen: false})
-              this.props.onRemove()
-            }}
-            name={this.props.name}
-          />
-          <Card.Header>{this.props.name}</Card.Header>
-          <Card.Meta>MAC: {this.props.mac}</Card.Meta>
-          <Card.Description>
-            <p>Requests: {this.props.requests}</p>
-            <p>
-              <Label color={color} horizontal>{status}</Label>
-            </p>
-          </Card.Description>
-        </Card.Content>
-        <Card.Content extra className="running-machine-card">
-          <div className='ui two buttons'>
-            <Button basic color='green' onClick={this.props.onStart}>
-              Start
-            </Button>
-            <Button
-              basic
-              color='red'
-              onClick={this.props.onStop}
-              disabled={this.props.requests == 0}
-            >
-              Stop
-            </Button>
-          </div>
-        </Card.Content>
-      </Card>
-    )
-  }
+  return (
+    <Message
+      onDismiss={onDismiss}
+      {...{color}}
+      icon
+    >
+      { status === 'pending' &&
+        <Icon name='circle notched' loading />
+      }
+      <Message.Content>
+        <Message.Header>{header}</Message.Header>
+        {text}
+      </Message.Content>
+    </Message>
+  )
 }
-
 
 class App extends Component {
   constructor() {
     super()
-    this.state = { data: null }
+    this.state = { data: null, lastMessage: null }
     this.updateData()
     setInterval(this.updateData.bind(this), 2000)
   }
 
+  setMessage(header, text, status) {
+    this.setState({ lastMessage: { header, text, status } })
+  }
+
+  clearMessage() {
+    this.setState({ lastMessage: null })
+  }
+
   async updateData() {
-    const resp = await axios.get('/api/list')
-    if (resp.status != 200) {
-      alert("Error while request new data") // TODO
-      return
+    try {
+      const resp = await axios.get('/api/list')
+      this.setState({ data: resp.data })
+    } catch (e) {
+      this.setMessage(
+        `Can't fetch update`,
+        e.message + ' / ' + e.response.data,
+        'error'
+      )
     }
-    this.setState({ data: resp.data })
   }
 
   async start(name) {
-    await axios.post(`/api/start/${name}`)
-    await this.updateData()
+    try {
+      this.setMessage(`Sending start request for "${name}"`, null, 'pending')
+      await axios.post(`/api/start/${name}`)
+      this.setMessage(`Start request for "${name}" was sent`, null, 'success')
+      await this.updateData()
+    } catch (e) {
+      this.setMessage(
+        `Can't send start request for "${name}"`,
+        e.message + ' / ' + e.response.data,
+        'error'
+      )
+    }
   }
 
   async stop(name) {
-    await axios.post(`/api/stop/${name}`)
-    await this.updateData()
+    try {
+      this.setMessage(`Sending stop request for "${name}"`, null, 'pending')
+      await axios.post(`/api/stop/${name}`)
+      this.setMessage(`Stop request for "${name}" was sent`, null, 'success')
+      await this.updateData()
+    } catch (e) {
+      this.setMessage(
+        `Can't send stop request for "${name}"`,
+        e.message + ' / ' + e.response.data,
+        'error'
+      )
+    }
   }
 
   async remove(name) {
-    alert('removing ' + name)
-    await axios.post(`/api/remove/${name}`)
-    await this.updateData()
+    try {
+      this.setMessage(`Removing machine "${name}"`, null, 'pending')
+      await axios.post(`/api/remove/${name}`)
+      this.setMessage(`Machine "${name}" removed`, null, 'success')
+      await this.updateData()
+    } catch (e) {
+      this.setMessage(
+        `Can't remove machine "${name}"`,
+        e.message + ' / ' + e.response.data,
+        'error'
+      )
+    }
+  }
+
+  async add(name, mac) {
+    try {
+      this.setMessage(`Saving machine "${name}"`, null, 'pending')
+      await axios.post(
+        `/api/add`,
+        {  name, mac }
+      )
+      this.setMessage(`Machine "${name}" saved`, null, 'success')
+      await this.updateData()
+    } catch (e) {
+      this.setMessage(
+        `Can't save machine "${name}"`,
+        e.message + ' / ' + e.response.data,
+        'error'
+      )
+    }
   }
 
   render() {
@@ -142,7 +146,43 @@ class App extends Component {
             <Header.Content>Power-Start</Header.Content>
           </Header>
         </div>
-        <Card.Group className='power-start-cards'>
+
+        {this.state.lastMessage &&
+          <Container className='power-start-message'>
+            <CustomMessage
+              header={this.state.lastMessage.header}
+              text={this.state.lastMessage.text}
+              status={this.state.lastMessage.status}
+              onDismiss={() => this.clearMessage()}
+            />
+          </Container>
+        }
+
+        <Container>
+          <Button
+            icon
+            labelPosition='left'
+            onClick={() => this.setState({ isAddModalOpen: true })}
+          >
+            <Icon name='add' />
+            Add a machine
+          </Button>
+          <AddModal
+            isOpen={this.state.isAddModalOpen}
+            onCancel={() => this.setState({ isAddModalOpen: false })}
+            onAdd={(name, mac) => {
+              this.setState({ isAddModalOpen: false })
+              this.add(name, mac)
+            }}
+          >
+
+          </AddModal>
+        </Container>
+
+        <Divider />
+
+        <Card.Group className='power-start-centered'>
+
           {this.state.data.map(machine =>
             <MachineCard
               key={machine.name}
