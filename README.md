@@ -8,6 +8,16 @@ Server sent special magic packet to launch computer via Wake-On-LAN.
 
 For each machine have stored count of start requests. If start requests is 0 then server will sent shutdown request to the machine. But for some time it will keep machine on when start requests count will 0.
 
+## Building
+
+[Golang](https://golang.org/doc/install)
+
+[Packr](https://github.com/gobuffalo/packr)
+
+[Node.js](https://nodejs.org/en/download/)
+
+See Makefile for build commands
+
 ## API
 
 ### Add machine

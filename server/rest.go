@@ -12,6 +12,7 @@ import (
 
 	bolt "github.com/coreos/bbolt"
 	"github.com/go-chi/chi"
+	"github.com/gobuffalo/packr"
 )
 
 type httpError struct {
@@ -44,9 +45,9 @@ func respondError(err error, w http.ResponseWriter, r *http.Request) {
 
 func (app *appHandle) runRest() {
 	r := chi.NewRouter()
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
+
+	build := packr.NewBox("../web/build")
+	r.Get("/*", http.FileServer(build).ServeHTTP)
 
 	r.Post("/api/add", func(w http.ResponseWriter, r *http.Request) {
 		machine := machineRecord{}
@@ -166,7 +167,7 @@ func (app *appHandle) runRest() {
 			Requests  int    `json:"requests"`
 			IsRunning bool   `json:"isRunning"`
 		}
-		var result []resultRecord
+		result := []resultRecord{}
 		err := app.db.View(func(tx *bolt.Tx) error {
 			machines := tx.Bucket(machineBucket)
 			c := machines.Cursor()
