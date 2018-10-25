@@ -29,7 +29,7 @@ script:
   - export WD="$GOPATH/github.com/misha-plus/power-start"
   - echo $WD
   - mkdir -p $WD
-  - cp -R $PWD $WD
+  - cp -R $PWD/* $WD
   - cd $WD
   - pwd
   - ls -R
