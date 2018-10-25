@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 
 # services:
 #   - docker
@@ -19,7 +19,16 @@ sudo: required
 
 install:
   - lsb_release -a
+  - node -v
+  - go version
 
 script:
   - go get github.com/gobuffalo/packr/packr
+  - pwd
+  - echo $GOPATH
+  - export $WD="$GOPATH/github.com/misha-plus/power-start"
+  - echo $WD
+  - mv . $WD
+  - cd $WD
+  - pwd
   - NODE_ENV=production make web-dep frontend server agent
