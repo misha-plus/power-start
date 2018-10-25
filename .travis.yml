@@ -32,4 +32,5 @@ script:
   - cp -R $PWD $WD
   - cd $WD
   - pwd
+  - ls
   - NODE_ENV=production make web-dep frontend server agent
