@@ -1,11 +1,25 @@
 sudo: required
 
-services:
-  - docker
+# services:
+#   - docker
+
+# install:
+#   - docker --version
+
+# script:
+#   - docker build -t release .
+
+# deploy:
+#   provider: releases
+#   api_key: "GITHUB OAUTH TOKEN"
+#   file: "FILE TO UPLOAD"
+#   skip_cleanup: true
+#   on:
+#     tags: true
 
 install:
-  - docker --version
-  - docker-compose --version
+  - lsb_release -a
 
 script:
-  - docker build .
+  - NODE_ENV=production
+  - make web-dep frontend server agent
