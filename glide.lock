@@ -1,16 +1,20 @@
-hash: b5468839b5b9534f47e5f7c7f2b3d512a1e69317be5d5f3547b517e9ed88be01
-updated: 2018-06-20T07:46:46.771597+05:00
+hash: 8a77918813c5a4751e403b7d60015d19e6cba297c5f9dd43cdb98dc839cb621c
+updated: 2018-10-25T15:56:50.202059+05:00
 imports:
 - name: github.com/coreos/bbolt
-  version: 48ea1b39c25fc1bab3506fbc712ecbaa842c4d2d
+  version: 7ee3ded59d4835e10f3e7d0f7603c42aa5e83820
 - name: github.com/go-chi/chi
-  version: e83ac2304db3c50cf03d96a2fcd39009d458bc35
+  version: b5294d10673813fac8558e7f47242bc9e61b4c25
 - name: github.com/go-ini/ini
-  version: 06f5f3d67269ccec1fe5fe4134ba6e982984f7f5
+  version: 9c8236e659b76e87bf02044d06fde8683008ff3e
+- name: github.com/gobuffalo/packr
+  version: 5a2cbb54c4e7d482e3f518c56f1f86f133d5204f
 - name: github.com/linde12/gowol
-  version: 56b9b9a7998ea7a7c7b1b0111a3f25d5865420ac
+  version: 797e4d01634cd51fe6df30e08de9d8a7ea4697e1
+- name: github.com/pkg/errors
+  version: 059132a15dd08d6704c67711dae0cf35ab991756
 - name: golang.org/x/sys
-  version: fc8bd948cf46f9c7af0f07d34151ce25fe90e477
+  version: d989b31c87461dc8ab2f1cac6792814e27fadea9
   subpackages:
   - unix
 testImports: []

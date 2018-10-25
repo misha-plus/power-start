@@ -363,6 +363,29 @@ key2=value2 #comment2`))
 				})
 			})
 
+			Convey("Skip unrecognizable lines", func() {
+				f, err := ini.LoadSources(ini.LoadOptions{
+					SkipUnrecognizableLines: true,
+				}, []byte(`
+GenerationDepth: 13
+
+BiomeRarityScale: 100
+
+################
+# Biome Groups #
+################
+
+BiomeGroup(NormalBiomes, 3, 99, RoofedForestEnchanted, ForestSakura, FloatingJungle
+BiomeGroup(IceBiomes, 4, 85, Ice Plains)
+`))
+				So(err, ShouldBeNil)
+				So(f, ShouldNotBeNil)
+
+				So(f.Section("").Key("GenerationDepth").String(), ShouldEqual, "13")
+				So(f.Section("").Key("BiomeRarityScale").String(), ShouldEqual, "100")
+				So(f.Section("").HasKey("BiomeGroup"), ShouldBeFalse)
+			})
+
 			Convey("Allow boolean type keys", func() {
 				f, err := ini.LoadSources(ini.LoadOptions{
 					AllowPythonMultilineValues: true,
@@ -764,7 +787,7 @@ GITHUB = U;n;k;n;w;o;n
 `))
 					So(err, ShouldBeNil)
 					So(f, ShouldNotBeNil)
-						sec := f.Section("author")
+					sec := f.Section("author")
 					nameValue := sec.Key("NAME").String()
 					githubValue := sec.Key("GITHUB").String()
 					So(nameValue, ShouldEqual, "U")
@@ -1206,5 +1229,22 @@ GITHUB = U;n;k;n;w;o;n
 				})
 			})
 		})
+	})
+}
+
+func Test_KeyValueDelimiters(t *testing.T) {
+	Convey("Custom key-value delimiters", t, func() {
+		f, err := ini.LoadSources(ini.LoadOptions{
+			KeyValueDelimiters: "?!",
+		}, []byte(`
+[section]
+key1?value1
+key2!value2
+`))
+		So(err, ShouldBeNil)
+		So(f, ShouldNotBeNil)
+
+		So(f.Section("section").Key("key1").String(), ShouldEqual, "value1")
+		So(f.Section("section").Key("key2").String(), ShouldEqual, "value2")
 	})
 }

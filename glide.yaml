@@ -7,3 +7,5 @@ import:
 - package: github.com/linde12/gowol
 - package: github.com/go-ini/ini
   version: ^1.37.0
+- package: github.com/gobuffalo/packr
+  version: ^1.13.7
