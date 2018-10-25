@@ -28,7 +28,8 @@ script:
   - echo $GOPATH
   - export WD="$GOPATH/github.com/misha-plus/power-start"
   - echo $WD
-  - mv $PWD $WD
+  - mkdir -p $WD
+  - cp -R $PWD $WD
   - cd $WD
   - pwd
   - NODE_ENV=production make web-dep frontend server agent
