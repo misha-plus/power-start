@@ -1,9 +1,11 @@
-language: go
+sudo: required
 
-go:
-  - 1.11.x
+services:
+  - docker
+
+install:
+  - docker --version
+  - docker-compose --version
 
 script:
-  - go build -o artifacts/power-start-agent agent/*.go
-  - go build -o artifacts/power-start-server server/*.go
-  - ls artifacts
+  - docker build .

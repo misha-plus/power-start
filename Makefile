@@ -3,13 +3,11 @@
 web-dep:
 	cd web && npm install
 
-frontend: web-dep
+frontend:
 	cd web && npm run build
 
-server: frontend
+server:
 	packr build -o artifacts/power-start-server server/*.go
 
 agent:
 	go build -o artifacts/power-start-agent agent/agent.go
-
-all: agent server
