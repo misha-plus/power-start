@@ -21,7 +21,7 @@ install:
   - lsb_release -a
   - node -v
   - gimme list
-  - gimme 1.11 && go version
+  - gimme 1.11.x && go version
   - go version
 
 script:
