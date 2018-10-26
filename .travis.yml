@@ -24,13 +24,11 @@ install:
 
 script:
   - go get github.com/gobuffalo/packr/packr
-  - pwd
-  - echo $GOPATH
   - export WD="$GOPATH/github.com/misha-plus/power-start"
-  - echo $WD
   - mkdir -p $WD
   - cp -R $PWD/* $WD
   - cd $WD
   - pwd
-  - ls -R
+  - ls
+  - echo $GOPATH
   - NODE_ENV=production make web-dep frontend server agent
