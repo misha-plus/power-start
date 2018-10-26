@@ -2,8 +2,6 @@ Power-Start
 ===========
 [![Build Status](https://travis-ci.org/misha-plus/power-start.svg?branch=master)](https://travis-ci.org/misha-plus/power-start)
 
-![Screenshot](/screenshots/main.png?raw=true)
-
 --------
 
 Server for starting and stopping machines in the LAN. Server has API and Web interface.
@@ -68,3 +66,6 @@ Example of response
   }
 ]
 ```
+
+## Screenshot
+![Screenshot](/screenshots/main.png?raw=true)
