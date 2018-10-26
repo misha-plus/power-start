@@ -2,7 +2,7 @@ Power-Start
 ===========
 [![Build Status](https://travis-ci.org/misha-plus/power-start.svg?branch=master)](https://travis-ci.org/misha-plus/power-start)
 
-![Screenshot](/screenshots/main.jpg?raw=true)
+![Screenshot](/screenshots/main.png?raw=true)
 
 --------
 
