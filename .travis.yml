@@ -9,9 +9,9 @@ install:
   - lsb_release -a
   - node -v
   - go version
+  - go get github.com/gobuffalo/packr/packr
 
 script:
-  - go get github.com/gobuffalo/packr/packr
   - pwd
   - ls
   - NODE_ENV=production make web-dep frontend
