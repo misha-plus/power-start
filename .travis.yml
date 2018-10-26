@@ -20,6 +20,7 @@ sudo: false
 install:
   - lsb_release -a
   - node -v
+  - gimme list
   - gimme force 1.11.1
   - go version
 
