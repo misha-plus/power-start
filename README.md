@@ -1,6 +1,10 @@
-Power start
+Power-Start
 ===========
 [![Build Status](https://travis-ci.org/misha-plus/power-start.svg?branch=master)](https://travis-ci.org/misha-plus/power-start)
+
+![Screenshot](/screenshots/main.jpg?raw=true)
+
+--------
 
 Server for starting and stopping machines in the LAN. Server has API and Web interface.
 
@@ -13,6 +17,10 @@ Raspberry Pi is supported for server and for agent. But don't know can the serve
 ## Usage
 
 Go to GitHub releases page and download appropriate version + config file.
+
+MAC address can be written in form 35-05-D0-01-96-34
+8D24.8618.8353
+a0:b3:4d:c7:1e:3a
 
 If some architecture is missed, you can build own version for your OS/Arch. Also, you can create issue or create a pull request by edit `.travis.yml`.
 
