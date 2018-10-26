@@ -2,11 +2,19 @@ Power start
 ===========
 [![Build Status](https://travis-ci.org/misha-plus/power-start.svg?branch=master)](https://travis-ci.org/misha-plus/power-start)
 
-Server for starting and stopping machines in the LAN.
+Server for starting and stopping machines in the LAN. Server has API and Web interface.
 
 Server sent special magic packet to launch computer via Wake-On-LAN.
 
 For each machine have stored count of start requests. If start requests is 0 then server will sent shutdown request to the machine. But for some time it will keep machine on when start requests count will 0.
+
+Raspberry Pi is supported for server and for agent. But don't know can the server power on RPI with WOL magic packet.
+
+## Usage
+
+Go to GitHub releases page and download appropriate version + config file.
+
+If some architecture is missed, you can build own version for your OS/Arch. Also, you can create issue or create a pull request by edit `.travis.yml`.
 
 ## Building
 
