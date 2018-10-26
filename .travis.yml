@@ -1,22 +1,5 @@
 sudo: false
 
-# services:
-#   - docker
-
-# install:
-#   - docker --version
-
-# script:
-#   - docker build -t release .
-
-# deploy:
-#   provider: releases
-#   api_key: "GITHUB OAUTH TOKEN"
-#   file: "FILE TO UPLOAD"
-#   skip_cleanup: true
-#   on:
-#     tags: true
-
 language: go
 
 go:
@@ -32,3 +15,12 @@ script:
   - pwd
   - ls
   - NODE_ENV=production make web-dep frontend server agent
+  - ls artifacts
+
+deploy:
+  provider: releases
+  api_key: $GH_OAUTH
+  file: artifacts/*
+  skip_cleanup: true
+  on:
+    tags: true
