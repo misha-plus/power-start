@@ -26,7 +26,7 @@ install:
 
 script:
   - go get github.com/gobuffalo/packr/packr
-  - export WD="$GOPATH/github.com/misha-plus/power-start"
+  - export WD="$GOPATH/src/github.com/misha-plus/power-start"
   - mkdir -p $WD
   - cp -R $PWD/* $WD
   - cd $WD
