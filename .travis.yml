@@ -33,7 +33,7 @@ deploy:
   file_glob: true
   file:
     - artifacts/*
-    - *-config.ini
+    - "*-config.ini"
   skip_cleanup: true
   on:
     tags: true
