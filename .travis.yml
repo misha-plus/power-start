@@ -15,21 +15,25 @@ script:
   - pwd
   - ls
   - NODE_ENV=production make web-dep frontend
-  - GOOS="linux" GOARCH="amd64" packr build -o artifacts/power-start-server-linux-amd64 server/*.go
-  - GOOS="linux" GOARCH="x86"   packr build -o artifacts/power-start-server-linux-x86 server/*.go
-  - GOOS="linux" GOARCH="arm" GOARM="6" packr build -o artifacts/power-start-server-linux-arm server/*.go
-  - GOOS="mac"   GOARCH="amd64" packr build -o artifacts/power-start-server-linux-mac-amd64 server/*.go
-  - GOOS="linux" GOARCH="amd64" go build -o artifacts/power-start-agent-linux-amd64 agent/agent.go
-  - GOOS="linux" GOARCH="x86"   go build -o artifacts/power-start-agent-linux-x86 agent/agent.go
-  - GOOS="linux" GOARCH="arm" GOARM="6" go build -o artifacts/power-start-agent-linux-arm agent/agent.go
-  - GOOS="mac"   GOARCH="amd64" go build -o artifacts/power-start-agent-mac-amd64 agent/agent.go
+  - GOOS="linux"  GOARCH="amd64" packr build -o artifacts/power-start-server-linux-amd64 server/*.go
+  - GOOS="linux"  GOARCH="386"   packr build -o artifacts/power-start-server-linux-x86 server/*.go
+  - GOOS="linux"  GOARCH="arm" GOARM="6" packr build -o artifacts/power-start-server-linux-arm server/*.go
+  - GOOS="linux"  GOARCH="arm64" packr build -o artifacts/power-start-server-linux-arm64 server/*.go
+  - GOOS="darwin" GOARCH="amd64" packr build -o artifacts/power-start-server-mac-amd64 server/*.go
+  - GOOS="linux"  GOARCH="amd64" go build -o artifacts/power-start-agent-linux-amd64 agent/agent.go
+  - GOOS="linux"  GOARCH="386"   go build -o artifacts/power-start-agent-linux-x86 agent/agent.go
+  - GOOS="linux"  GOARCH="arm" GOARM="6" go build -o artifacts/power-start-agent-linux-arm agent/agent.go
+  - GOOS="linux"  GOARCH="arm64" go build -o artifacts/power-start-agent-linux-arm64 agent/agent.go
+  - GOOS="darwin" GOARCH="amd64" go build -o artifacts/power-start-agent-mac-amd64 agent/agent.go
   - ls artifacts
 
 deploy:
   provider: releases
   api_key: $GH_OAUTH
   file_glob: true
-  file: artifacts/*
+  file:
+    - artifacts/*
+    - *-config.ini
   skip_cleanup: true
   on:
     tags: true
