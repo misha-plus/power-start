@@ -16,11 +16,12 @@ script:
   - ls
   - NODE_ENV=production make web-dep frontend
   - pushd server
-  - GOOS="linux"  GOARCH="amd64" packr build -o ../artifacts/power-start-server-linux-amd64 *.go
-  - GOOS="linux"  GOARCH="386"   packr build -o ../artifacts/power-start-server-linux-x86 *.go
-  - GOOS="linux"  GOARCH="arm" GOARM="6" packr build -o ../artifacts/power-start-server-linux-arm *.go
-  - GOOS="linux"  GOARCH="arm64" packr build -o ../artifacts/power-start-server-linux-arm64 *.go
-  - GOOS="darwin" GOARCH="amd64" packr build -o ../artifacts/power-start-server-mac-amd64 *.go
+  - packr
+  - GOOS="linux"  GOARCH="amd64" go build -o ../artifacts/power-start-server-linux-amd64 *.go
+  - GOOS="linux"  GOARCH="386"   go build -o ../artifacts/power-start-server-linux-x86 *.go
+  - GOOS="linux"  GOARCH="arm" GOARM="6" go build -o ../artifacts/power-start-server-linux-arm *.go
+  - GOOS="linux"  GOARCH="arm64" go build -o ../artifacts/power-start-server-linux-arm64 *.go
+  - GOOS="darwin" GOARCH="amd64" go build -o ../artifacts/power-start-server-mac-amd64 *.go
   - popd
   - GOOS="linux"  GOARCH="amd64" go build -o artifacts/power-start-agent-linux-amd64 agent/agent.go
   - GOOS="linux"  GOARCH="386"   go build -o artifacts/power-start-agent-linux-x86 agent/agent.go

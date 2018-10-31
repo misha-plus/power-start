@@ -43,7 +43,7 @@ func respondError(err error, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *appHandle) runRest() {
+func (app *appHandle) runRest() error {
 	r := chi.NewRouter()
 
 	build := packr.NewBox("../web/build")
@@ -240,5 +240,5 @@ func (app *appHandle) runRest() {
 	})
 
 	log.Printf("Starting at %s", config.BindAddress)
-	http.ListenAndServe(config.BindAddress, r)
+	return http.ListenAndServe(config.BindAddress, r)
 }

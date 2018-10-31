@@ -66,5 +66,7 @@ func main() {
 	}()
 
 	go app.runBackgoundJobs()
-	app.runRest()
+	if err := app.runRest(); err != nil {
+		log.Fatal(err)
+	}
 }
