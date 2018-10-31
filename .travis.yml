@@ -27,6 +27,7 @@ script:
   - GOOS="darwin" GOARCH="amd64" go build -o artifacts/power-start-agent-mac-amd64 agent/agent.go
   - ls artifacts
   - cp *.ini artifacts/
+  - rm -rf web/build
   - ./artifacts/power-start-server-linux-amd64 &
   - sleep 3
   - curl http://localhost:4000/ -f -v
@@ -37,7 +38,6 @@ deploy:
   file_glob: true
   file:
     - artifacts/*
-    - "*-config.ini"
   skip_cleanup: true
   on:
     tags: true
