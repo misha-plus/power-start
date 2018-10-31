@@ -28,6 +28,7 @@ script:
   - ls artifacts
   - cp *.ini artifacts/
   - ./artifacts/power-start-server-linux-amd64 &
+  - sleep 3
   - curl http://localhost:4000/ -f -v
 
 deploy:
